@@ -18,3 +18,10 @@ class ExampleTest(TestCase):
     def test_sample_nest(self):
         perm = self.ss.sample_perm_nest()
         self.assertEqual(3, len(perm))
+
+    def test_wr_idxes_available(self):
+        idxes = self.ss.idxes_available_
+        self.assertEqual(10, len(idxes))
+        self.ss.idxes_available_ = [0, 1, 2]
+        idxes = self.ss.idxes_available_
+        self.assertEqual(3, len(idxes))
