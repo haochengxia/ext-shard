@@ -3,11 +3,11 @@
 #include <vector>
 #include <xtensor/xarray.hpp>
 
+using NestedList = std::vector<std::vector<int>>;
+using IndexList = xt::xarray<int>;
+
 class ShardedStructure {
 public:
-  using NestedList = std::vector<std::vector<int>>;
-  using IndexList = xt::xarray<int>;
-
   // ctor
   ShardedStructure(const NestedList &nl);
   // dtor
@@ -19,6 +19,7 @@ public:
 
   int get_max_shard_size() { return max_shard_size_; }
   int get_num_ele() { return num_ele_; }
+  int get_num_shard() { return num_shard_; }
   int get_shard_idx(int ele_idx) { return to_shard_idx_[ele_idx]; }
   int get_shard_size(int ele_idx) { return to_shard_size_[ele_idx]; }
 

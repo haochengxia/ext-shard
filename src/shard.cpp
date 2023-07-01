@@ -35,7 +35,7 @@ ShardedStructure::ShardedStructure(const NestedList &nl) {
 
 ShardedStructure::~ShardedStructure() {}
 
-ShardedStructure::NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
+NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
   std::mt19937 rng(seed);
   NestedList res(num_shard_);
 
@@ -55,7 +55,7 @@ ShardedStructure::NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
   return res;
 }
 
-ShardedStructure::IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
+IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
   std::mt19937 rng(seed);
   IndexList res(num_ele_);
 
