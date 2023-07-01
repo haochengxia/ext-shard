@@ -20,8 +20,8 @@ class ExampleTest(TestCase):
         self.assertEqual(3, len(perm))
 
     def test_wr_idxes_available(self):
-        idxes = self.ss.idxes_available_
+        idxes = self.ss.idxes_available
         self.assertEqual(10, len(idxes))
-        self.ss.idxes_available_ = [0, 1, 2]
-        idxes = self.ss.idxes_available_
+        self.ss.idxes_available = [0, 1, 2]
+        idxes = self.ss.idxes_available
         self.assertEqual(3, len(idxes))

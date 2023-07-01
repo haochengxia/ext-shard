@@ -1,23 +1,14 @@
 #include "pybind11/pybind11.h"
 #include "pybind11/stl.h"
 
-#include "xtensor/xarray.hpp"
-#include "xtensor/xtensor.hpp"
-#define FORCE_IMPORT_ARRAY
-#include "xtensor-python/pyarray.hpp"
-#include "xtensor-python/pyvectorize.hpp"
-
 #include <algorithm>
-#include <cmath>
-#include <iostream>
-#include <numeric>
 #include <random>
 #include <vector>
 
 namespace py = pybind11;
 
 using NestedList = std::vector<std::vector<int>>;
-using IndexList = xt::xarray<int>;
+using IndexList = std::vector<int>;
 
 class ShardedStructure {
 public:
@@ -29,7 +20,6 @@ public:
   // functions
   NestedList sample_perm_nest(unsigned seed = std::random_device()());
   IndexList sample_perm_flat(unsigned seed = std::random_device()());
-  std::vector<int> sample_perm_flat_wrapper(unsigned seed);
 
   int get_max_shard_size() { return max_shard_size_; }
   int get_num_ele() { return num_ele_; }
@@ -38,7 +28,7 @@ public:
   int get_shard_size(int ele_idx) { return to_shard_size_[ele_idx]; }
 
   // mutable
-  IndexList idxes_available_;
+  IndexList idxes_available;
 
 private:
   int max_shard_size_;
@@ -77,7 +67,8 @@ ShardedStructure::ShardedStructure(const NestedList &nl) {
   }
 
   // init idxes available
-  idxes_available_ = xt::arange(num_ele_);
+  idxes_available.resize(num_ele_);
+  std::iota(idxes_available.begin(), idxes_available.end(), 0);
 }
 
 ShardedStructure::~ShardedStructure() {}
@@ -104,7 +95,7 @@ NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
 
 IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
   std::mt19937 rng(seed);
-  IndexList res = xt::empty<int>({num_ele_});
+  IndexList res = IndexList(num_ele_);
 
   std::vector<size_t> indices(num_shard_);
   std::iota(indices.begin(), indices.end(), 0);
@@ -122,45 +113,19 @@ IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
   return res;
 }
 
-std::vector<int> ShardedStructure::sample_perm_flat_wrapper(unsigned seed) {
-  xt::xarray<int> arr = sample_perm_flat(seed);
-  return std::vector<int>(arr.begin(), arr.end());
-}
 
 PYBIND11_MODULE(xtensor_shard, m) {
-  xt::import_numpy();
   // Define ShardedStructure
   py::class_<ShardedStructure>(m, "ShardedStructure")
       .def(py::init<NestedList &>())
       .def("sample_perm_nest", &ShardedStructure::sample_perm_nest,
            py::arg("seed") = std::random_device()())
-      .def("sample_perm_flat", &ShardedStructure::sample_perm_flat_wrapper,
+      .def("sample_perm_flat", &ShardedStructure::sample_perm_flat,
            py::arg("seed") = std::random_device()())
       .def("get_max_shard_size", &ShardedStructure::get_max_shard_size)
       .def("get_num_ele", &ShardedStructure::get_num_ele)
       .def("get_num_shard", &ShardedStructure::get_num_shard)
       .def("get_shard_idx", &ShardedStructure::get_shard_idx)
       .def("get_shard_size", &ShardedStructure::get_shard_size)
-      .def_readwrite("idxes_available_", &ShardedStructure::idxes_available_);
+      .def_readwrite("idxes_available", &ShardedStructure::idxes_available);
 }
-// PYBIND11_MODULE(xtensor_shard, m) {
-//   m.doc() = R"pbdoc(
-//         An xtensor extension for shard structure
-//
-//         .. currentmodule:: xtensor_shard
-//
-//         .. autosummary::
-//            :toctree: _generate
-//     )pbdoc";
-//
-//   py::class_<ShardedStructure>(m, "ShardedStructure")
-//       .def(py::init<const ShardedStructure::NestedList &>())
-//       .def("sample_perm_nest", &ShardedStructure::sample_perm_nest)
-//       .def("sample_perm_flat", &ShardedStructure::sample_perm_flat)
-//       .def("get_max_shard_size", &ShardedStructure::get_max_shard_size)
-//       .def("get_num_ele", &ShardedStructure::get_num_ele)
-//       .def("get_num_shard", &ShardedStructure::get_num_shard)
-//       .def("get_shard_idx", &ShardedStructure::get_shard_idx)
-//       .def("get_shard_size", &ShardedStructure::get_shard_size)
-//       .def_readwrite("idxes_available", &ShardedStructure::idxes_available_);
-// }
