@@ -10,6 +10,7 @@ namespace py = pybind11;
 using NestedList = std::vector<std::vector<int>>;
 using IndexList = std::vector<int>;
 
+
 class ShardedStructure {
 public:
   // ctor
@@ -39,6 +40,7 @@ private:
   std::vector<int> to_shard_idx_;  // from ele index to its shard index
   std::vector<int> to_shard_size_; // from ele index to its shard size
 };
+
 
 ShardedStructure::ShardedStructure(const NestedList &nl) {
   num_ele_ = 0;
@@ -71,7 +73,9 @@ ShardedStructure::ShardedStructure(const NestedList &nl) {
   std::iota(idxes_available.begin(), idxes_available.end(), 0);
 }
 
+
 ShardedStructure::~ShardedStructure() {}
+
 
 NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
   std::mt19937 rng(seed);
@@ -92,6 +96,7 @@ NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
   }
   return res;
 }
+
 
 IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
   std::mt19937 rng(seed);

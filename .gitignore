@@ -6,3 +6,42 @@ build/
 
 # OS X
 .DS_Store
+
+# custom
+tmp/
+var/
+
+# python
+.coverage
+MANIFEST
+coverage.xml
+nosetests.xml
+junit-report.xml
+pylint.txt
+toy.py
+.cache/
+cover/
+build/
+docs/_build
+requests.egg-info/
+*.pyc
+*.swp
+*.egg
+env/
+.venv/
+.eggs/
+.tox/
+.pytest_cache/
+.vscode/
+.idea/
+
+.data_files/
+.res/
+
+.workon
+
+/.mypy_cache/
+
+.DS_Store
+.ipynb_checkpoints
+

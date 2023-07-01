@@ -92,23 +92,26 @@ class BuildExt(build_ext):
         ct = self.compiler.compiler_type
         opts = self.c_opts.get(ct, [])
         if ct == 'unix':
-            opts.append('-DVERSION_INFO="%s"' % self.distribution.get_version())
+            opts.append('-DVERSION_INFO="%s"' %
+                        self.distribution.get_version())
             opts.append(cpp_flag(self.compiler))
             if has_flag(self.compiler, '-fvisibility=hidden'):
                 opts.append('-fvisibility=hidden')
         elif ct == 'msvc':
-            opts.append('/DVERSION_INFO=\\"%s\\"' % self.distribution.get_version())
+            opts.append('/DVERSION_INFO=\\"%s\\"' %
+                        self.distribution.get_version())
         for ext in self.extensions:
             ext.extra_compile_args = opts
         build_ext.build_extensions(self)
+
 
 setup(
     name='xtensor_shard',
     version=__version__,
     author='haochengxia',
     author_email='xiahc@zju.edu.cn',
-    url='https://github.com/xtensor-stack/xtensor-shard',
-    description= 'An xtensor extension for shard structure',
+    url='https://github.com/haochengxia/shard',
+    description='An C++ extension for shard structure',
     long_description='',
     ext_modules=ext_modules,
     install_requires=['pybind11>=2.0.1', 'numpy'],
