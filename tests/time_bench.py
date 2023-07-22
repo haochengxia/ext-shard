@@ -141,7 +141,7 @@ css = CSS(nl)
 for _ in range(1000):
     css.sample_perm_flat()
 e = time()
-print(e-b)
+print(f'time cost for shard_cpp:\t {e-b}')
 
 
 b = time()
@@ -149,4 +149,4 @@ ss = ShardedStructure(nl)
 for _ in range(1000):
     sample_perm(nl)
 e = time()
-print(e-b)
+print(f'time cost for shard_py: \t {e-b}')

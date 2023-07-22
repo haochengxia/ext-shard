@@ -22,6 +22,7 @@ public:
   ~ShardedStructure();
 
   // functions
+  void set_random_state(unsigned seed);
   NestedList
   sample_perm_nest(optional<unsigned> seed = nullopt); // std::random_device()()
   IndexList sample_perm_flat(optional<unsigned> seed = nullopt);
@@ -40,6 +41,9 @@ private:
   int num_shard_;
   int num_ele_;
   NestedList nl_;
+  unsigned seed_;
+
+  std::mt19937 rng_;
 
   std::vector<int> to_shard_idx_;  // from ele index to its shard index
   std::vector<int> to_shard_size_; // from ele index to its shard size
@@ -74,52 +78,50 @@ ShardedStructure::ShardedStructure(const NestedList &nl) {
   // init idxes available
   idxes_available.resize(num_ele_);
   std::iota(idxes_available.begin(), idxes_available.end(), 0);
+
+  // init random state
+  seed_ = rand();
+  rng_.seed(seed_);
 }
 
 ShardedStructure::~ShardedStructure() {}
 
-NestedList ShardedStructure::sample_perm_nest(optional<unsigned> seed) {
-  unsigned s_v;
-  if (seed.has_value())
-    s_v = seed.value();
-  else
-    s_v = rand();
-  std::mt19937 rng(s_v);
-  NestedList res(num_shard_);
+void ShardedStructure::set_random_state(unsigned seed) { rng_.seed(seed); }
 
+NestedList ShardedStructure::sample_perm_nest(optional<unsigned> seed) {
+  if (seed.has_value())
+    rng_.seed(seed.value());
+
+  NestedList res(num_shard_);
   // outer shuffle
   std::vector<size_t> indices(num_shard_);
   std::iota(indices.begin(), indices.end(), 0);
-  std::shuffle(indices.begin(), indices.end(), rng);
+  std::shuffle(indices.begin(), indices.end(), rng_);
   for (int i = 0; i < num_shard_; ++i)
     res[i] = nl_[indices[i]];
 
   // inner shuffle
   for (auto &s : res) {
     if (s.size() > 1) {
-      std::shuffle(s.begin(), s.end(), rng);
+      std::shuffle(s.begin(), s.end(), rng_);
     }
   }
   return res;
 }
 
 IndexList ShardedStructure::sample_perm_flat(optional<unsigned> seed) {
-  unsigned s_v;
   if (seed.has_value())
-    s_v = seed.value();
-  else
-    s_v = rand();
-  std::mt19937 rng(s_v);
-  IndexList res = IndexList(num_ele_);
+    rng_.seed(seed.value());
 
+  IndexList res = IndexList(num_ele_);
   std::vector<size_t> indices(num_shard_);
   std::iota(indices.begin(), indices.end(), 0);
-  std::shuffle(indices.begin(), indices.end(), rng);
+  std::shuffle(indices.begin(), indices.end(), rng_);
 
   int cursor = 0;
   for (int i = 0; i < num_shard_; i++) {
     auto s = nl_[indices[i]];
-    std::shuffle(s.begin(), s.end(), rng);
+    std::shuffle(s.begin(), s.end(), rng_);
     for (int v : s) {
       res[cursor] = v;
       cursor++;
@@ -132,6 +134,8 @@ PYBIND11_MODULE(ext_shard, m) {
   // Define ShardedStructure
   py::class_<ShardedStructure>(m, "ShardedStructure")
       .def(py::init<NestedList &>())
+      .def("set_random_state", &ShardedStructure::set_random_state,
+           py::arg("seed") = std::random_device()())
       .def("sample_perm_nest", &ShardedStructure::sample_perm_nest,
            py::arg("seed") = py::none())
       .def("sample_perm_flat", &ShardedStructure::sample_perm_flat,
