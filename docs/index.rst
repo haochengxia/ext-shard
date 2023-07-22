@@ -1,4 +1,4 @@
-xtensor_shard Documentation
+ext_shard Documentation
 =======================================
 
 Contents:
@@ -6,5 +6,5 @@ Contents:
 .. toctree::
    :maxdepth: 1
 
-   xtensor_shard 
+   ext_shard 
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# xtensor_shard documentation build configuration file, created by
+# ext_shard documentation build configuration file, created by
 # sphinx-quickstart on Fri Feb 26 00:29:33 2016.
 #
 # This file is execfile()d with the current directory set to its
@@ -52,7 +52,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'xtensor_shard'
+project = u'ext_shard'
 copyright = u'2016, haochengxia'
 author = u'haochengxia'
 
@@ -206,7 +206,7 @@ html_theme = 'alabaster'
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'xtensor_sharddoc'
+htmlhelp_basename = 'ext_sharddoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -228,7 +228,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'xtensor_shard.tex', u'xtensor_shard Documentation',
+    (master_doc, 'ext_shard.tex', u'ext_shard Documentation',
      u'haochengxia', 'manual'),
 ]
 
@@ -258,7 +258,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'xtensor_shard', u'xtensor_shard Documentation',
+    (master_doc, 'ext_shard', u'ext_shard Documentation',
      [author], 1)
 ]
 
@@ -272,8 +272,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'xtensor_shard', u'xtensor_shard Documentation',
-     author, 'xtensor_shard', 'One line description of project.',
+    (master_doc, 'ext_shard', u'ext_shard Documentation',
+     author, 'ext_shard', 'One line description of project.',
      'Miscellaneous'),
 ]
 

@@ -17,7 +17,7 @@ e.g. A Sharded Structure represented as [[0],[1,2]]
    {0}  {1} {2}
 """
 
-from xtensor_shard import ShardedStructure as CSS
+from ext_shard import ShardedStructure as CSS
 from time import time
 from typing import List
 import numpy as np

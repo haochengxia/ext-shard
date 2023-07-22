@@ -39,7 +39,7 @@ class get_numpy_include(object):
 
 ext_modules = [
     Extension(
-        'xtensor_shard',
+        'ext_shard',
         ['src/main.cpp'],
         include_dirs=[
             # Path to pybind11 headers
@@ -75,7 +75,7 @@ def cpp_flag(compiler):
     if has_flag(compiler, '-std=c++14'):
         return '-std=c++14'
     else:
-        raise RuntimeError('C++14 support is required by xtensor!')
+        raise RuntimeError('C++14 support is required!')
 
 
 class BuildExt(build_ext):
@@ -106,7 +106,7 @@ class BuildExt(build_ext):
 
 
 setup(
-    name='xtensor_shard',
+    name='ext_shard',
     version=__version__,
     author='haochengxia',
     author_email='xiahc@zju.edu.cn',

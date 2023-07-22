@@ -119,7 +119,7 @@ IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
 }
 
 
-PYBIND11_MODULE(xtensor_shard, m) {
+PYBIND11_MODULE(ext_shard, m) {
   // Define ShardedStructure
   py::class_<ShardedStructure>(m, "ShardedStructure")
       .def(py::init<NestedList &>())

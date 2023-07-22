@@ -1,4 +1,4 @@
-import xtensor_shard as m
+import ext_shard as m
 from unittest import TestCase
 
 
