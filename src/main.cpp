@@ -2,6 +2,8 @@
 #include "pybind11/stl.h"
 
 #include <algorithm>
+#include <cstdlib>
+#include <optional>
 #include <random>
 #include <vector>
 
@@ -9,7 +11,8 @@ namespace py = pybind11;
 
 using NestedList = std::vector<std::vector<int>>;
 using IndexList = std::vector<int>;
-
+using std::nullopt;
+using std::optional;
 
 class ShardedStructure {
 public:
@@ -19,8 +22,9 @@ public:
   ~ShardedStructure();
 
   // functions
-  NestedList sample_perm_nest(unsigned seed = std::random_device()());
-  IndexList sample_perm_flat(unsigned seed = std::random_device()());
+  NestedList
+  sample_perm_nest(optional<unsigned> seed = nullopt); // std::random_device()()
+  IndexList sample_perm_flat(optional<unsigned> seed = nullopt);
 
   int get_max_shard_size() { return max_shard_size_; }
   int get_num_ele() { return num_ele_; }
@@ -40,7 +44,6 @@ private:
   std::vector<int> to_shard_idx_;  // from ele index to its shard index
   std::vector<int> to_shard_size_; // from ele index to its shard size
 };
-
 
 ShardedStructure::ShardedStructure(const NestedList &nl) {
   num_ele_ = 0;
@@ -73,12 +76,15 @@ ShardedStructure::ShardedStructure(const NestedList &nl) {
   std::iota(idxes_available.begin(), idxes_available.end(), 0);
 }
 
-
 ShardedStructure::~ShardedStructure() {}
 
-
-NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
-  std::mt19937 rng(seed);
+NestedList ShardedStructure::sample_perm_nest(optional<unsigned> seed) {
+  unsigned s_v;
+  if (seed.has_value())
+    s_v = seed.value();
+  else
+    s_v = rand();
+  std::mt19937 rng(s_v);
   NestedList res(num_shard_);
 
   // outer shuffle
@@ -97,9 +103,13 @@ NestedList ShardedStructure::sample_perm_nest(unsigned seed) {
   return res;
 }
 
-
-IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
-  std::mt19937 rng(seed);
+IndexList ShardedStructure::sample_perm_flat(optional<unsigned> seed) {
+  unsigned s_v;
+  if (seed.has_value())
+    s_v = seed.value();
+  else
+    s_v = rand();
+  std::mt19937 rng(s_v);
   IndexList res = IndexList(num_ele_);
 
   std::vector<size_t> indices(num_shard_);
@@ -118,15 +128,14 @@ IndexList ShardedStructure::sample_perm_flat(unsigned seed) {
   return res;
 }
 
-
 PYBIND11_MODULE(ext_shard, m) {
   // Define ShardedStructure
   py::class_<ShardedStructure>(m, "ShardedStructure")
       .def(py::init<NestedList &>())
       .def("sample_perm_nest", &ShardedStructure::sample_perm_nest,
-           py::arg("seed") = std::random_device()())
+           py::arg("seed") = py::none())
       .def("sample_perm_flat", &ShardedStructure::sample_perm_flat,
-           py::arg("seed") = std::random_device()())
+           py::arg("seed") = py::none())
       .def("get_max_shard_size", &ShardedStructure::get_max_shard_size)
       .def("get_num_ele", &ShardedStructure::get_num_ele)
       .def("get_num_shard", &ShardedStructure::get_num_shard)
